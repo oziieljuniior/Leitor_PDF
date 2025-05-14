@@ -1,0 +1,35 @@
+.
+├── documentos
+│   └── SAGE_ManCfg_Anx17_61850 1.pdf
+├── models
+│   └── phi-2.Q4_K_M.gguf
+├── outputs
+│   └── source.pdf
+├── poetry.lock
+├── pyproject
+│   ├── partes_pdf
+│   │   ├── parte_1_chunks.pkl
+│   │   ├── parte_1.faiss
+│   │   ├── parte_1.pdf
+│   │   ├── parte_2_chunks.pkl
+│   │   ├── parte_2.faiss
+│   │   ├── parte_2.pdf
+│   │   ├── parte_3_chunks.pkl
+│   │   ├── parte_3.faiss
+│   │   ├── parte_3.pdf
+│   │   ├── parte_4_chunks.pkl
+│   │   ├── parte_4.faiss
+│   │   ├── parte_4.pdf
+│   │   ├── parte_5_chunks.pkl
+│   │   ├── parte_5.faiss
+│   │   ├── parte_5.pdf
+│   │   ├── parte_6_chunks.pkl
+│   │   ├── parte_6.faiss
+│   │   └── parte_6.pdf
+│   └── source.ipynb
+├── pyproject.toml
+├── README.md
+├── requirements.txt
+└── saida.txt
+
+6 directories, 27 files

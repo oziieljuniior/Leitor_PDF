@@ -68,6 +68,6 @@ Você é um assistente com conhecimento profundo em textos técnicos. Responda a
 
 ## Ou download em Nuvem
 
-**Aqui, o modelo foi previamente baixado e colocado em uma nuvem drive**. Esse modo não é recomendado pois ele deve consumir mémoria em nuvem, existem outras maneiras mais eficientes de contornar esse problema. Caso queira, podemos conversar para mais investimentos.
+**Aqui, o modelo foi previamente baixado e colocado em uma nuvem drive**. Esse modo não é recomendado pois ele deve consumir memória em nuvem, existem outras maneiras mais eficientes de contornar esse problema. Caso queira, podemos conversar para mais investimentos.
 
-[Link para download direto no google drive - Não recomendado]()
+[Link para download direto no google drive - Não recomendado](https://drive.google.com/file/d/1ncmxUnLjH-JF9vKBefHMKO21cib4aUZD/view?usp=sharing)

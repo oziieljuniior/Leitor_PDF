@@ -8,7 +8,7 @@ import faiss
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
-# Configuração do tema
+# === Configurações iniciais ===
 ctk.set_appearance_mode("light")
 ctk.set_default_color_theme("blue")
 
@@ -16,6 +16,8 @@ CHUNK_SIZE = 300
 OUTPUT_DIR = "partes_pdf"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+
+# === Processador de PDF com embeddings ===
 class PDFProcessor:
     def __init__(self, embed_model_name='paraphrase-albert-small-v2'):
         self.model = SentenceTransformer(embed_model_name)
@@ -49,17 +51,27 @@ class PDFProcessor:
 
     def processar(self, path):
         partes = self.dividir_pdf(path)
+        arquivos_gerados = []
         for parte in partes:
             texto = self.extrair_texto(parte)
             chunks = self.chunk_text(texto)
             base = os.path.splitext(parte)[0]
             self.salvar(chunks, base)
+            arquivos_gerados.append((f"{base}.faiss", f"{base}_chunks.pkl"))
+        return arquivos_gerados[0]  # Retorna a primeira parte processada
 
+
+# === Janela de interação com perguntas ===
 class ChatWindow(ctk.CTkToplevel):
-    def __init__(self):
+    def __init__(self, faiss_path, chunks_path, embed_model):
         super().__init__()
         self.title("Perguntas sobre o Relatório")
         self.geometry("600x500")
+
+        self.index = faiss.read_index(faiss_path)
+        with open(chunks_path, "rb") as f:
+            self.chunks = pickle.load(f)
+        self.model = embed_model
 
         self.historico = ctk.CTkTextbox(self, height=300)
         self.historico.pack(padx=20, pady=10, fill="both", expand=True)
@@ -77,10 +89,22 @@ class ChatWindow(ctk.CTkToplevel):
     def enviar(self):
         pergunta = self.entrada.get()
         if pergunta:
+            resposta = self.responder(pergunta)
             self.historico.insert("end", f"Você: {pergunta}\n")
-            self.historico.insert("end", f"Resposta: [resposta gerada aqui]\n\n")
+            self.historico.insert("end", f"Resposta: {resposta}\n\n")
             self.entrada.delete(0, 'end')
 
+    def responder(self, pergunta):
+        try:
+            emb = self.model.encode([pergunta])
+            D, I = self.index.search(emb, k=3)
+            resposta = "\n\n".join([self.chunks[i] for i in I[0] if i < len(self.chunks)])
+            return resposta.strip()
+        except Exception as e:
+            return f"[Erro ao gerar resposta: {str(e)}]"
+
+
+# === Janela principal ===
 class MainWindow(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -110,14 +134,18 @@ class MainWindow(ctk.CTk):
             try:
                 self.btn.configure(state="disabled", text="Processando...")
                 self.update()
-                self.processor.processar(caminho)
+
+                faiss_path, chunks_path = self.processor.processar(caminho)
                 messagebox.showinfo("Sucesso", "PDF processado com sucesso!")
-                ChatWindow()
+
+                ChatWindow(faiss_path, chunks_path, self.processor.model)
             except Exception as e:
                 messagebox.showerror("Erro", f"Ocorreu um erro ao processar o PDF:\n{str(e)}")
             finally:
                 self.btn.configure(state="normal", text="Selecionar PDF para Processar")
 
+
+# === Execução principal ===
 if __name__ == "__main__":
     app = MainWindow()
     app.mainloop()
